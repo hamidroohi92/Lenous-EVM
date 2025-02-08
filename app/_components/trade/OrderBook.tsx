@@ -103,7 +103,6 @@ const formatNumber = (value: number, decimals: number): string => {
 const Orderbook: React.FC<OrderbookProps> = ({ userAddress }) => {
   const [amount, setAmount] = useState<number>(0);
   const [selectedToken, setSelectedToken] = useState<string>("ETH");
-  const { selectedAsset } = useSelector((state: any) => state.trade);
   const { allPositions } = useSelector((state: any) => state.trade);
 
   // useEffect(() => {

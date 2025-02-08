@@ -8,7 +8,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAccount, useBalance } from "wagmi";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, sepolia } from "viem/chains";
+import { TOKEN_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 
 interface Props {
   visible: boolean;
@@ -51,9 +52,11 @@ export default function DepositModal({
   const { address } = useAccount();
   const { data, error, isLoading } = useBalance({
     address: address, // Replace with your address
-    token: "0x66f7bab5E0351Dceca01a1B1f3fAFfE2d0c17e3A", // USDC token address on Base Sepolia
-    chainId: baseSepolia.id,
+    token: TOKEN_CONTRACT_ADDRESS, // USDC token address on Base Sepolia
+    chainId: sepolia.id,
   });
+
+  console.log("is loading", isLoading);
 
   const [percent, setPercent] = useState<number | string>(0);
 

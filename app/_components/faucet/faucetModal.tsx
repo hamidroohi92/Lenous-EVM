@@ -49,13 +49,11 @@ export default function FaucetModal({ visible, handleClose }: Props) {
   );
 
   const handleFaucet = async () => {
-    console.log("Faucet");
     handleClose();
 
     await tokenContract
       .mint(address, +amount * 10 ** 6)
       .then((res: any) => {
-        console.log(res);
         setAddress("");
         setAmount("");
       })

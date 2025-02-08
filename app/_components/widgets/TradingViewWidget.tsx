@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 const TradingViewWidget: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
 
   useEffect(() => {
     const container = containerRef.current;

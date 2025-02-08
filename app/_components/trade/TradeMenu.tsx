@@ -11,7 +11,7 @@ import { setSelectedAsset } from "@/app/redux/slices/tradeSlice";
 
 export default function TradeMenu() {
   const [activeMenu, setActiveMenu] = useState(0);
-  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
   const dispatch = useDispatch();
 
   const menuItems = [

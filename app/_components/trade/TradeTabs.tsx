@@ -39,9 +39,9 @@ export default function TradeTabs() {
   const { address } = useAccount();
   const dispatch = useDispatch();
   const [filteredByAsset, setFilteredByAsset] = useState<boolean>(false);
-  const { userOrders, userPositions, ordersHistory } = useSelector(
-    (state: any) => state.trade
-  );
+  const userOrders = useSelector((state: any) => state.trade.userOrders);
+  const userPositions = useSelector((state: any) => state.trade.userPositions);
+  const ordersHistory = useSelector((state: any) => state.trade.ordersHistory);
 
   useEffect(() => {
     if (address) {

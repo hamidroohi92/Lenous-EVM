@@ -25,7 +25,8 @@ const MarketOrder: React.FC<Props> = ({
   const [amount, setAmount] = useState<string>("");
   const [percent, setPercent] = useState<number>(25);
   const [lastFocus, setLastFoucs] = useState<number>(0);
-  const { selectedAsset, prices } = useSelector((state: any) => state.trade);
+  const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
+  const prices = useSelector((state: any) => state.trade.prices);
 
   // Initialize contract instance
   // const contract = new ethers.Contract(

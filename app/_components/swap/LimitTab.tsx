@@ -70,53 +70,6 @@ const LimitTab = () => {
   };
 
   useEffect(() => {
-    fetchPrices();
-
-    const ws = new WebSocket(
-      "wss://ws.coincap.io/prices?assets=" + tokenOne.id + "," + tokenTwo.id
-    );
-
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setPrices((prevPrices: any) => {
-        const updatedPrices = { ...prevPrices };
-
-        if (data[tokenOne.id]) {
-          updatedPrices.tokenOne = parseFloat(data[tokenOne.id]).toFixed(4);
-        }
-
-        if (data[tokenTwo.id]) {
-          updatedPrices.tokenTwo = parseFloat(data[tokenTwo.id]).toFixed(4);
-        }
-
-        // updatedPrices.ratio =
-        //   parseFloat(updatedPrices.tokenOne) /
-        //   parseFloat(updatedPrices.tokenTwo);
-
-        // Call the update function to ensure tokenTwoAmount is updated correctly
-
-        return updatedPrices;
-      });
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, [tokenOne, tokenTwo]);
-
-  useEffect(() => {
     if (
       tokenOneAmount !== "" &&
       prices &&

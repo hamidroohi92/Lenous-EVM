@@ -44,7 +44,7 @@ interface OrderMarket {
 }
 
 export default function HistoryRecord({ order }: any) {
-  const { prices } = useSelector((state: any) => state.trade);
+  const prices = useSelector((state: any) => state.trade.prices);
   console.log(order.isBuyOrder);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });

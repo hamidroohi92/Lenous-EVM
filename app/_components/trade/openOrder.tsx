@@ -40,7 +40,7 @@ interface OrderMarket {
 }
 
 export default function OpenOrder({ order }: any) {
-  const { prices } = useSelector((state: any) => state.trade);
+  const prices = useSelector((state: any) => state.trade.prices);
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 

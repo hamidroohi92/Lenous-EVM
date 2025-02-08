@@ -17,7 +17,7 @@ import {
   ORDERBOOK_CONTRACT_ADDRESS,
 } from "@/app/_libs/utils/constants/contractAddresses";
 import TokenList from "./tokenList";
-import { baseSepolia } from "@wagmi/core/chains";
+import { baseSepolia, sepolia } from "@wagmi/core/chains";
 import ConfirmModal from "./comfirmModal";
 import DepositModal from "./depositModal";
 import WithdrawModal from "./withdrawModal";
@@ -51,8 +51,8 @@ export interface OrderErrors {
 }
 
 const PlaceOrder: React.FC = () => {
+  console.log("place order");
   const orderPartRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
   const [check, setCheck] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderToPlace>(initialOrder);
   const { openConnectModal } = useConnectModal();
@@ -62,7 +62,7 @@ const PlaceOrder: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
-  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
   const [errors, setErrors] = useState<OrderErrors>({
     unit: null,
     price: null,
@@ -74,9 +74,8 @@ const PlaceOrder: React.FC = () => {
   // const [userBalance, setUserBalance] = useState<number>(0);
   // const [userFreeMargin, setUserFreeMargin] = useState<number>(0);
   // const [userUsedMargin, setUserUsedMargin] = useState<number>(0);
-  const { balances } = useSelector((state: any) => state.trade);
-
-  const signer = useEthersSigner({ chainId: baseSepolia.id });
+  const balances = useSelector((state: any) => state.trade.balances);
+  const signer = useEthersSigner({ chainId: sepolia.id });
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
@@ -145,7 +144,7 @@ const PlaceOrder: React.FC = () => {
       });
       await contract
         .placeMarketOrder(
-          "0x4554480000000000000000000000000000000000",
+          selectedAsset.address,
           ethers.utils.parseUnits(unit.toString(), "ether"),
           isBuyOrder,
           leverage,

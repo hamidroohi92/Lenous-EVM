@@ -1,18 +1,18 @@
-'use client';
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { tokenList } from '@/app/_libs/utils/constants/TokenList';
-import SwapInput from './SwapInput';
-import ModalTokensList from './ModalTokensList';
-import SwapButton from './SwapButton';
-import Icon from '../UI/icon';
-import JSBI from 'jsbi';
+"use client";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { tokenList } from "@/app/_libs/utils/constants/TokenList";
+import SwapInput from "./SwapInput";
+import ModalTokensList from "./ModalTokensList";
+import SwapButton from "./SwapButton";
+import Icon from "../UI/icon";
+import JSBI from "jsbi";
 import {
   Token,
   CurrencyAmount,
   TradeType,
   Percent,
   ChainId,
-} from '@uniswap/sdk-core';
+} from "@uniswap/sdk-core";
 import {
   Pool,
   Route,
@@ -21,18 +21,18 @@ import {
   SwapQuoter,
   SwapRouter,
   SwapOptions,
-} from '@uniswap/v3-sdk';
-import { ethers } from 'ethers';
-import { useEthersProvider, useEthersSigner } from '@/app/_libs/utils/ethers';
-import { useAccount } from 'wagmi';
-import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
-import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json';
+} from "@uniswap/v3-sdk";
+import { ethers } from "ethers";
+import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
+import { useAccount } from "wagmi";
+import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
+import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 
 const SwapTab = () => {
   const [tokenOne, setTokenOne] = useState(tokenList[0]);
   const [tokenTwo, setTokenTwo] = useState(tokenList[1]);
-  const [tokenOneAmount, setTokenOneAmount] = useState<number | string>('');
-  const [tokenTwoAmount, setTokenTwoAmount] = useState<number | string>('');
+  const [tokenOneAmount, setTokenOneAmount] = useState<number | string>("");
+  const [tokenTwoAmount, setTokenTwoAmount] = useState<number | string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [changeToken, setChangeToken] = useState<number>(1);
   const [prices, setPrices] = useState<any>({});
@@ -45,11 +45,11 @@ const SwapTab = () => {
     fetchPrices();
 
     const ws = new WebSocket(
-      'wss://ws.coincap.io/prices?assets=' + tokenOne.id + ',' + tokenTwo.id
+      "wss://ws.coincap.io/prices?assets=" + tokenOne.id + "," + tokenTwo.id
     );
 
     ws.onopen = () => {
-      console.log('WebSocket connected');
+      console.log("WebSocket connected");
     };
 
     ws.onmessage = (event) => {
@@ -74,11 +74,11 @@ const SwapTab = () => {
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log("WebSocket connection closed");
     };
 
     return () => {
@@ -88,7 +88,7 @@ const SwapTab = () => {
 
   useEffect(() => {
     if (
-      tokenOneAmount !== '' &&
+      tokenOneAmount !== "" &&
       prices &&
       prices.ratio !== undefined &&
       parseFloat(prices.ratio) !== 0
@@ -98,7 +98,7 @@ const SwapTab = () => {
         (amountNumber * parseFloat(prices.ratio)).toFixed(6).toString()
       );
     } else {
-      setTokenTwoAmount('');
+      setTokenTwoAmount("");
     }
   }, [tokenOneAmount, prices, tokenOne]);
 
@@ -124,10 +124,10 @@ const SwapTab = () => {
 
         setPrices(usdPrices);
       } else {
-        console.warn('TokenTwo price is zero, skipping ratio calculation');
+        console.warn("TokenTwo price is zero, skipping ratio calculation");
       }
     } catch (error) {
-      console.error('Error fetching token prices:', error);
+      console.error("Error fetching token prices:", error);
     }
   };
 
@@ -135,7 +135,7 @@ const SwapTab = () => {
     let amount = e.target.value;
     const re = /^[0-9]*\.?[0-9]*$/;
 
-    if (amount === '' || re.test(amount)) {
+    if (amount === "" || re.test(amount)) {
       setTokenOneAmount(amount);
     }
   };
@@ -163,13 +163,12 @@ const SwapTab = () => {
   };
 
   const clearTokenInput = () => {
-    setTokenOneAmount('');
-    setTokenTwoAmount('');
+    setTokenOneAmount("");
+    setTokenTwoAmount("");
   };
 
   const getPoolAddress = async (tokenA: Token, tokenB: Token) => {
     const poolAddress = Pool.getAddress(tokenA, tokenB, FeeAmount.MEDIUM);
-    console.log(poolAddress);
     return poolAddress;
   };
   function fromReadableAmount(
@@ -180,35 +179,34 @@ const SwapTab = () => {
   }
   const executeSwap = async () => {
     if (!signer || !provider) {
-      console.error('Signer or provider is not available');
+      console.error("Signer or provider is not available");
       return;
     }
-    console.log(address);
 
     const tokenA = new Token(
       ChainId.MAINNET,
-      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
       18,
-      'WETH',
-      'Wrapped Ether'
+      "WETH",
+      "Wrapped Ether"
     );
 
     const tokenB = new Token(
       ChainId.MAINNET,
-      '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       6,
-      'USDC',
-      'USD//C'
+      "USDC",
+      "USD//C"
     );
-    const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
     const poolAddress = await getPoolAddress(tokenA, tokenB);
 
     if (!poolAddress || poolAddress === ZERO_ADDRESS) {
-      console.error('No pool found for the token pair');
+      console.error("No pool found for the token pair");
       return;
     }
     console.log(IUniswapV3PoolABI.abi);
-    console.log('Pool Address:', poolAddress);
+    console.log("Pool Address:", poolAddress);
     const poolContract = new ethers.Contract(
       poolAddress,
       IUniswapV3PoolABI.abi,
@@ -235,7 +233,7 @@ const SwapTab = () => {
     const route = new Route([pool], tokenA, tokenB);
     console.log(route);
     const QUOTER_CONTRACT_ADDRESS =
-      '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
+      "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
     const quoterContract = new ethers.Contract(
       QUOTER_CONTRACT_ADDRESS,
       Quoter.abi,
@@ -277,9 +275,9 @@ const SwapTab = () => {
     );
     console.log(methodParameters);
 
-    const V3_SWAP_ROUTER_ADDRESS = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
-    const MAX_FEE_PER_GAS = '100000000000';
-    const MAX_PRIORITY_FEE_PER_GAS = '100000000000';
+    const V3_SWAP_ROUTER_ADDRESS = "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45";
+    const MAX_FEE_PER_GAS = "100000000000";
+    const MAX_PRIORITY_FEE_PER_GAS = "100000000000";
 
     const tx = {
       data: methodParameters.calldata,
@@ -293,9 +291,9 @@ const SwapTab = () => {
     try {
       const txResponse = await signer.sendTransaction(tx);
       await txResponse.wait();
-      console.log('Transaction completed:', txResponse);
+      console.log("Transaction completed:", txResponse);
     } catch (error) {
-      console.error('Error executing swap:', error);
+      console.error("Error executing swap:", error);
     }
   };
   return (

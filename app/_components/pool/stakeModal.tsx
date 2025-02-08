@@ -89,11 +89,9 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
   const handleStake = async () => {
-    console.log("add liq");
     if (address) {
       handleClose();
       const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
-      console.log(contract);
 
       const tokenContract = new ethers.Contract(
         TOKEN_CONTRACT_ADDRESS,
@@ -109,10 +107,8 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
         deadline,
         address.toString()
       ).then((res) => {
-        console.log("sign request", res);
         signature = res.data.signature;
       });
-      console.log("signature", signature);
       if (signature) {
         const approveTx = await tokenContract.approve(
           LP_CONTRACT_ADDRESS,

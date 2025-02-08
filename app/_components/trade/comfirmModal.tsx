@@ -40,7 +40,7 @@ export default function ConfirmModal({
     },
   };
 
-  const { selectedAsset } = useSelector((state: any) => state.trade);
+  const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
 
   return (
     <Modal

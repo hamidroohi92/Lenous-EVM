@@ -37,7 +37,7 @@ const LimitOrder: React.FC<Props> = ({
   const [profitTotalValue, setProfitTotalValue] = useState<string>("");
   const [lossPercentage, setLossPercentage] = useState<string>("");
   const [lossTotalValue, setLossTotalValue] = useState<string>("");
-  const { balances } = useSelector((state: any) => state.trade);
+  const balances = useSelector((state: any) => state.trade.balances);
 
   useEffect(() => {
     if (TimeInForce === "Good Til Time") {
