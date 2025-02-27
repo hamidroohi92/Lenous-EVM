@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
-import { baseSepolia } from "viem/chains";
+import { sepolia } from "viem/chains";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import { TOKEN_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
 
@@ -41,7 +41,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
   const [address, setAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
 
-  const signer = useEthersSigner({ chainId: baseSepolia.id });
+  const signer = useEthersSigner({ chainId: sepolia.id });
   const tokenContract = new ethers.Contract(
     TOKEN_CONTRACT_ADDRESS,
     TokenABI,
@@ -52,7 +52,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
     handleClose();
 
     await tokenContract
-      .mint(address, +amount * 10 ** 6)
+      .mint(address, +amount * 10 ** 18)
       .then((res: any) => {
         setAddress("");
         setAmount("");

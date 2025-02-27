@@ -79,7 +79,7 @@ const PlaceOrder: React.FC = () => {
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
-    TradeABI,
+    TradeABI.abi,
     signer
   );
 
@@ -98,18 +98,19 @@ const PlaceOrder: React.FC = () => {
       : new Date().getTime();
     const leverage = order.leverage;
     const marginType = order.margin === Margin_Type.Cross ? 1 : 0;
+    console.log("price", order.price);
 
-    console.log("order", {
-      asset,
-      price: ethers.utils.parseUnits(price.toString(), "ether"),
-      stopLossPrice,
-      takeProfitPrice,
-      amount: ethers.utils.parseUnits(unit.toString(), "ether"),
-      isBuyOrder,
-      expiration,
-      leverage,
-      marginType,
-    });
+    // console.log("order", {
+    //   asset,
+    //   price: ethers.utils.parseUnits(price.toString(), "ether"),
+    //   stopLossPrice,
+    //   takeProfitPrice,
+    //   amount: ethers.utils.parseUnits(unit.toString(), "ether"),
+    //   isBuyOrder,
+    //   expiration,
+    //   leverage,
+    //   marginType,
+    // });
 
     if (order.type === Order_Type.Limit) {
       await contract
@@ -134,7 +135,7 @@ const PlaceOrder: React.FC = () => {
       //   leverage,
       //   marginType
       // );
-      const gasPrice = ethers.utils.parseUnits("10", "gwei");
+      // const gasPrice = ethers.utils.parseUnits("10", "gwei");
       console.log({
         asset,
         amount: ethers.utils.parseUnits(unit.toString(), "ether"),
@@ -172,13 +173,13 @@ const PlaceOrder: React.FC = () => {
 
     const approveTx = await tokenContract.approve(
       ORDERBOOK_CONTRACT_ADDRESS,
-      depositAmount * 10 ** 6
+      0.01 * 10 ** 18
     );
 
     await approveTx.wait();
 
     await contract
-      .deposit(depositAmount * 10 ** 6)
+      .deposit(0.01 * 10 ** 18)
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err));
   };
