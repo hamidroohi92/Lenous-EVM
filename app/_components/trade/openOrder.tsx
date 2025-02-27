@@ -46,7 +46,7 @@ export default function OpenOrder({ order }: any) {
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
-    TradeABI,
+    TradeABI.abi,
     signer
   );
 

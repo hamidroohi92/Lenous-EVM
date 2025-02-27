@@ -161,8 +161,6 @@ const PlaceOrder: React.FC = () => {
   };
 
   const handleDeposit = async () => {
-    const gasPrice = ethers.utils.parseUnits("0.00000000001", "ether");
-    const gasLimit = ethers.utils.parseUnits("0.00000000001", "ether");
     setShowDepositModal(false);
 
     const tokenContract = new ethers.Contract(
@@ -173,13 +171,13 @@ const PlaceOrder: React.FC = () => {
 
     const approveTx = await tokenContract.approve(
       ORDERBOOK_CONTRACT_ADDRESS,
-      0.01 * 10 ** 18
+      BigInt(depositAmount) * BigInt(10 ** 18)
     );
 
     await approveTx.wait();
 
     await contract
-      .deposit(0.01 * 10 ** 18)
+      .deposit(BigInt(depositAmount) * BigInt(10 ** 18))
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err));
   };
