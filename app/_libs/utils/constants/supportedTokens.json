@@ -1,12 +1,12 @@
 {
   "tokens": [
     {
-      "address": "0x76246d836c689e87f179e1111be0f04d0d26f4cf",
+      "address": "0xD19E810499a85c3000E101A821A3e3E6dd74fB56",
       "symbol": "BTC",
       "name": "Bitcoin"
     },
     {
-      "address": "0x4554480000000000000000000000000000000000",
+      "address": "0xD19E810499a85c3000E101A821A3e3E6dd74fB56",
       "symbol": "ETH",
       "name": "Ethereum"
     }

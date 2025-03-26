@@ -13,7 +13,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { baseSepolia } from "viem/chains";
-import TradeABI from "../../_libs/ABIs/order-book.json";
+import TradeABI from "../../_libs/ABIs/OrderBook.json";
 import data from "../../_libs/utils/constants/supportedTokens.json";
 
 export interface orderToShow {
@@ -50,7 +50,7 @@ export default function OpenPosition({ order }: any) {
 
   const contract = new ethers.Contract(
     ORDERBOOK_CONTRACT_ADDRESS,
-    TradeABI,
+    TradeABI.abi,
     signer
   );
 

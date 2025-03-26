@@ -95,7 +95,7 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
 
       const tokenContract = new ethers.Contract(
         TOKEN_CONTRACT_ADDRESS,
-        TokenABI,
+        TokenABI.abi,
         signer
       );
       const deadline = new Date().getTime() + 5 * 60 * 1000;

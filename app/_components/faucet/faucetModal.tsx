@@ -44,7 +44,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
   const signer = useEthersSigner({ chainId: sepolia.id });
   const tokenContract = new ethers.Contract(
     TOKEN_CONTRACT_ADDRESS,
-    TokenABI,
+    TokenABI.abi,
     signer
   );
 

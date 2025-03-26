@@ -50,15 +50,11 @@ export default function DepositModal({
   };
 
   const { address } = useAccount();
-  console.log(address);
   const { data, error, isLoading } = useBalance({
     address: address, // Replace with your address
     token: TOKEN_CONTRACT_ADDRESS, // USDC token address on Base Sepolia
     chainId: sepolia.id,
   });
-
-  console.log("is loading", isLoading);
-  console.log("error", error);
 
   const [percent, setPercent] = useState<number | string>(0);
 

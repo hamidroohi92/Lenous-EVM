@@ -10,7 +10,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount, useWriteContract } from "wagmi";
 import { useEthersProvider, useEthersSigner } from "@/app/_libs/utils/ethers";
 import { ethers } from "ethers";
-import TradeABI from "../../_libs/ABIs/order-book.json";
+import TradeABI from "../../_libs/ABIs/OrderBook.json";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import {
   TOKEN_CONTRACT_ADDRESS,
@@ -62,6 +62,7 @@ const PlaceOrder: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
+  const [testOrderId, setTestOrderId] = useState<string>("");
   const selectedAsset = useSelector((state: any) => state.trade.selectedAsset);
   const [errors, setErrors] = useState<OrderErrors>({
     unit: null,
@@ -82,6 +83,10 @@ const PlaceOrder: React.FC = () => {
     TradeABI.abi,
     signer
   );
+
+  console.log("order book abi", TradeABI.abi);
+
+  console.log("order book Contract", contract);
 
   const handlePlaceOrder = async () => {
     console.log("contract", contract);
@@ -165,7 +170,7 @@ const PlaceOrder: React.FC = () => {
 
     const tokenContract = new ethers.Contract(
       TOKEN_CONTRACT_ADDRESS,
-      TokenABI,
+      TokenABI.abi,
       signer
     );
 
@@ -258,6 +263,20 @@ const PlaceOrder: React.FC = () => {
     }
   }, [order]);
 
+  const handleClosePosition = async () => {
+    await contract
+      .closePosition(
+        "0xD19E810499a85c3000E101A821A3e3E6dd74fB56",
+        97104034613502396575157182601301207396263305238732126658993946214110136245419n
+      )
+      .then((res: any) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="p-4">
       {/* Margin Type Selection */}
@@ -343,6 +362,16 @@ const PlaceOrder: React.FC = () => {
       </div>
       {isConnected ? (
         <>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => {
+                handleClosePosition();
+              }}
+              className="bg-platform-bg-gradient w-full rounded-2xl text-white py-[10px] font-poppins "
+            >
+              Close position
+            </button>
+          </div>
           <button
             onClick={() => {
               if (!handleCheckErrors()) {
