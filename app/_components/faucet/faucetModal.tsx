@@ -7,7 +7,10 @@ import Modal from "react-modal";
 import { useSelector } from "react-redux";
 import { sepolia } from "viem/chains";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
-import { TOKEN_CONTRACT_ADDRESS } from "@/app/_libs/utils/constants/contractAddresses";
+import {
+  LP_TOKEN_CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
+} from "@/app/_libs/utils/constants/contractAddresses";
 
 interface Props {
   visible: boolean;
@@ -43,7 +46,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
 
   const signer = useEthersSigner({ chainId: sepolia.id });
   const tokenContract = new ethers.Contract(
-    TOKEN_CONTRACT_ADDRESS,
+    LP_TOKEN_CONTRACT_ADDRESS,
     TokenABI.abi,
     signer
   );
@@ -52,7 +55,7 @@ export default function FaucetModal({ visible, handleClose }: Props) {
     handleClose();
 
     await tokenContract
-      .mint(address, +amount * 10 ** 18)
+      .mint(address, BigInt(amount) * BigInt(10 ** 18))
       .then((res: any) => {
         setAddress("");
         setAmount("");
