@@ -18,7 +18,7 @@ export default function Stake() {
 
   const signer = useEthersSigner({ chainId: baseSepolia.id });
 
-  const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LPABI, signer);
+  const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LPABI.abi, signer);
   // console.log("lp contract", contract);
 
   return (
