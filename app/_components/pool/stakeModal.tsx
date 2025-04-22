@@ -1,5 +1,6 @@
 import {
   LP_CONTRACT_ADDRESS,
+  LP_TOKEN_CONTRACT_ADDRESS,
   TOKEN_CONTRACT_ADDRESS,
 } from "@/app/_libs/utils/constants/contractAddresses";
 import { useEthersSigner } from "@/app/_libs/utils/ethers";
@@ -7,7 +8,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, sepolia } from "viem/chains";
 import LpABI from "../../_libs/ABIs/LiquidityPool.json";
 import TokenABI from "../../_libs/ABIs/TokenContract.json";
 import { handleGetNonce } from "@/app/dataRequests/userDataRequests";
@@ -51,6 +52,7 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
   const [amount, setAmount] = useState<string>("");
   const [lpAmount, setLpAmount] = useState<number>(0);
   const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const [lpBalance, setLpBalance] = useState<number>(0);
 
   useEffect(() => {
     setTimeout(() => {
@@ -86,51 +88,71 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
     },
   };
 
-  const signer = useEthersSigner({ chainId: baseSepolia.id });
+  const signer = useEthersSigner({ chainId: sepolia.id });
+
+  const handleGetLpBalance = async () => {
+    console.log("check balance");
+    const contract = new ethers.Contract(
+      LP_CONTRACT_ADDRESS,
+      LpABI.abi,
+      signer
+    );
+
+    const balances = await contract.balances(address);
+    console.log("lp balances", parseInt(balances._hex, 16));
+    setLpBalance(parseInt(balances._hex, 16) / 10 ** 18);
+  };
 
   const handleStake = async () => {
     if (address) {
       handleClose();
-      const contract = new ethers.Contract(LP_CONTRACT_ADDRESS, LpABI, signer);
+      const contract = new ethers.Contract(
+        LP_CONTRACT_ADDRESS,
+        LpABI.abi,
+        signer
+      );
 
       const tokenContract = new ethers.Contract(
-        TOKEN_CONTRACT_ADDRESS,
+        LP_TOKEN_CONTRACT_ADDRESS,
         TokenABI.abi,
         signer
       );
       const deadline = new Date().getTime() + 5 * 60 * 1000;
       let signature;
 
-      await handleGetSignatureForDeposit(
-        +amount,
-        +tokenAmount,
-        deadline,
-        address.toString()
-      ).then((res) => {
-        signature = res.data.signature;
-      });
-      if (signature) {
-        const approveTx = await tokenContract.approve(
-          LP_CONTRACT_ADDRESS,
-          +amount * 10 ** 6
-        );
+      // await handleGetSignatureForDeposit(
+      //   +amount,
+      //   +tokenAmount,
+      //   deadline,
+      //   address.toString()
+      // ).then((res) => {
+      //   signature = res.data.signature;
+      // });
+      // if (signature) {
+      const approveTx = await tokenContract.approve(
+        LP_CONTRACT_ADDRESS,
+        BigInt(amount) * BigInt(10 ** 18)
+      );
 
-        await approveTx.wait();
+      await approveTx.wait();
 
-        await contract
-          .deposit(
-            ethers.utils.parseUnits(amount.toString(), 6),
-            ethers.utils.parseUnits(tokenAmount.toString(), 18).toString(),
-            deadline,
-            signature
-          )
-          .then((res: any) => {
-            console.log(res);
-          })
-          .catch((err: any) => {
-            console.log(err);
-          });
-      }
+      console.log(BigInt(amount) * BigInt(10 ** 18));
+      await contract
+        .provideLiquidity(
+          BigInt(amount) * BigInt(10 ** 18),
+          1
+
+          // ethers.utils.parseUnits(tokenAmount.toString(), 18).toString(),
+          // deadline,
+          // signature
+        )
+        .then((res: any) => {
+          console.log(res);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+      // }
     }
   };
 
@@ -140,6 +162,9 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
 
   useEffect(() => {
     setAmount("");
+    if (isOpen) {
+      handleGetLpBalance();
+    }
   }, [isOpen]);
 
   return (
@@ -152,42 +177,47 @@ export default function StakeModal({ isOpen, handleClose }: Props) {
       <div className="flex flex-col gap-8">
         <h1 className="text-4xl font-extrabold text-white font-poppins">
           Add Liquidity
-        </h1>
-        <div className="font-poppins italic flex items-center gap-3 w-full">
-          <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[75%]">
-            <div>
-              <p className="text-neutral-light text-md">USDC</p>
-              <input
-                type="text"
-                value={amount}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  const regex = /^[0-9]*\.?[0-9]*$/;
-                  if (regex.test(inputValue)) {
-                    setAmount(inputValue);
-                  }
-                }}
-                placeholder="Amount"
-                className="bg-transparent text-white text-2xl font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
+        </h1>{" "}
+        <div>
+          <h2 className="text-md mb-2 font-medium text-white font-poppins">
+            You have already deposited ${lpBalance} into LP
+          </h2>
+          <div className="font-poppins italic flex items-center gap-3 w-full">
+            <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[75%]">
+              <div>
+                <p className="text-neutral-light text-md">USDC</p>
+                <input
+                  type="text"
+                  value={amount}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    const regex = /^[0-9]*\.?[0-9]*$/;
+                    if (regex.test(inputValue)) {
+                      setAmount(inputValue);
+                    }
+                  }}
+                  placeholder="Amount"
+                  className="bg-transparent text-white text-2xl font-poppins italic flex-grow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <Image
+                  src="https://cdn.moralis.io/eth/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
+                  width={30}
+                  height={30}
+                  className="w-[30px] h-[30px] object-contain"
+                  alt="USDC Token"
+                />
+                <p className="text-white">USDC</p>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Image
-                src="https://cdn.moralis.io/eth/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
-                width={30}
-                height={30}
-                className="w-[30px] h-[30px] object-contain"
-                alt="USDC Token"
-              />
-              <p className="text-white">USDC</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[25%] flex-shrink-0">
-            <div>
-              <p className="text-neutral-light text-md">LP Token</p>
-              <p className="text-neutral-light text-2xl">
-                {tokenAmount.toFixed(2)}
-              </p>
+            <div className="flex items-center justify-between bg-white-bg-05 py-2 px-6 rounded-2xl w-[25%] flex-shrink-0">
+              <div>
+                <p className="text-neutral-light text-md">LP Token</p>
+                <p className="text-neutral-light text-2xl">
+                  {tokenAmount.toFixed(2)}
+                </p>
+              </div>
             </div>
           </div>
         </div>
