@@ -24,10 +24,6 @@ const menuData = [
     href: "/pool",
     name: "Pool",
   },
-  {
-    href: "/stake",
-    name: "Stake",
-  },
 ];
 
 const NavBar = () => {
