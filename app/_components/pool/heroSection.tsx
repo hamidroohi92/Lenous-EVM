@@ -1,4 +1,10 @@
-export default function HeroSection({ openModal }: { openModal: () => void }) {
+export default function HeroSection({
+  openDepositModal,
+  openWithdrawModal,
+}: {
+  openDepositModal: () => void;
+  openWithdrawModal: () => void;
+}) {
   return (
     <div className="flex justify-between h-[400px] py-[71px]">
       <div className="flex flex-col gap-[12px]">
@@ -25,12 +31,20 @@ export default function HeroSection({ openModal }: { openModal: () => void }) {
             <p className="text-4xl text-white font-thin italic">$41.01 B</p>
           </div>
         </div>
-        <button
-          onClick={openModal}
-          className="bg-[#4E8AFF33] text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF1a]"
-        >
-          Add Liquidity
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={openDepositModal}
+            className="bg-[#4E8AFF33] text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF1a]"
+          >
+            Add Liquidity
+          </button>
+          <button
+            onClick={openWithdrawModal}
+            className="bg-transparent text-white text-[24px] h-[56px] rounded-[20px] px-4 border-[3px] border-solid border-[#4E8AFF]"
+          >
+            Withdraw
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -9,21 +9,35 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import { baseSepolia } from "viem/chains";
 import LPABI from "../../_libs/ABIs/LiquidityPool.json";
+import LpWithdrawModal from "@/app/_components/pool/lpWithdrawModal";
 
 export default function Pool() {
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const openModal = () => {
-    setShowModal(true);
+  const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false);
+  const openDepositModal = () => {
+    setShowDepositModal(true);
+  };
+  const openWithdrawModal = () => {
+    setShowWithdrawModal(true);
   };
 
   return (
     <section className="px-[160px] pb-[172px]">
-      <HeroSection openModal={openModal} />
-      <PoolSection openModal={openModal} />
+      <HeroSection
+        openDepositModal={openDepositModal}
+        openWithdrawModal={openWithdrawModal}
+      />
+      <PoolSection openDepositModal={openDepositModal} />
       <StakeModal
-        isOpen={showModal}
+        isOpen={showDepositModal}
         handleClose={() => {
-          setShowModal(false);
+          setShowDepositModal(false);
+        }}
+      />
+      <LpWithdrawModal
+        isOpen={showWithdrawModal}
+        handleClose={() => {
+          setShowWithdrawModal(false);
         }}
       />
     </section>
