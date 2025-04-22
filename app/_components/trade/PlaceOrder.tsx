@@ -263,19 +263,19 @@ const PlaceOrder: React.FC = () => {
     }
   }, [order]);
 
-  const handleClosePosition = async () => {
-    await contract
-      .closePosition(
-        "0xD19E810499a85c3000E101A821A3e3E6dd74fB56",
-        97104034613502396575157182601301207396263305238732126658993946214110136245419n
-      )
-      .then((res: any) => {
-        console.log(res);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  };
+  // const handleClosePosition = async () => {
+  //   await contract
+  //     .closePosition(
+  //       "0xD19E810499a85c3000E101A821A3e3E6dd74fB56",
+  //       97104034613502396575157182601301207396263305238732126658993946214110136245419n
+  //     )
+  //     .then((res: any) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err: any) => {
+  //       console.log(err);
+  //     });
+  // };
 
   return (
     <div className="p-4">
@@ -362,7 +362,7 @@ const PlaceOrder: React.FC = () => {
       </div>
       {isConnected ? (
         <>
-          <div className="flex flex-col gap-2">
+          {/* <div className="flex flex-col gap-2">
             <button
               onClick={() => {
                 handleClosePosition();
@@ -371,7 +371,7 @@ const PlaceOrder: React.FC = () => {
             >
               Close position
             </button>
-          </div>
+          </div> */}
           <button
             onClick={() => {
               if (!handleCheckErrors()) {
